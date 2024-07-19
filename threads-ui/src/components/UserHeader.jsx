@@ -45,7 +45,10 @@ function UserHeader() {
         </Box>
         {/* Box 2 */}
         <Box>
-          <Avatar name="Mark Zuckerverge" src="/zuck-avatar.png" size={"xl"} />
+          <Avatar name="Mark Zuckerverge" src="/zuck-avatar.png" size={{
+            "base":"md",
+            "md" : "xl",
+          }} />
         </Box>
       </Flex>
       {/* Part 2 */}
