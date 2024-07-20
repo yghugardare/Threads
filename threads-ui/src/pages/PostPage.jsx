@@ -2,6 +2,7 @@ import { Avatar, Box, Button, Divider, Flex, Image, Text, useColorMode } from "@
 import { BsThreeDots } from "react-icons/bs";
 import Actions from "../components/Actions";
 import { useState } from "react";
+import Comments from "../components/Comments";
 
 function PostPage() {
   const[liked,setLiked]= useState(false)
@@ -55,6 +56,28 @@ function PostPage() {
         <Button bg={colorMode==="light"? "gray.300":"gray.light"}>Get</Button>
       </Flex>
       <Divider my={4} borderColor={colorMode==="dark" ? "gray.light":"gray.dark"}/>
+      {/* Part 7 Comment  */}
+      <Comments
+      username={"Yash Ghugardare"}
+      comment={"Hey! Any job openings at Meta ?"}
+      likes={1000}
+      createdAt={1}
+      userAvatar={""}
+      />
+      <Comments
+      username={"Bill Gates"}
+      comment={"Hey! Mark what's going on Buddy?!"}
+      likes={69}
+      createdAt={3}
+      userAvatar={""}
+      />
+      <Comments
+      username={"Elon Musk"}
+      comment={"You suck Mark! Btw Yash , we are interested in hiring you. Come to Tesla 😎"}
+      likes={89}
+      createdAt={1}
+      userAvatar={""}
+      />
     </>
   );
 }
