@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema({
     password : {
         type :String,
         required : [true,"Password of the user is required"],
-        unique : true
+        unique : true,
+        minLength : 6
     },
     followers : {
         type : [String],
