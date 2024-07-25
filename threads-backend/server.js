@@ -2,9 +2,10 @@ import express from "express"
 import dotenv from  "dotenv"
 import { connectDb } from "./db/connectDb.js"
 import cookieParser from "cookie-parser"
+import { userRoute } from "./routes/user.route.js"
 dotenv.config()
 connectDb()
-const app = express()
+    const app = express()
 
 // global middlewares
 // parses the JSON payload of incoming requests and makes it accessible in req.body. 
@@ -15,6 +16,8 @@ app.use(express.urlencoded({extended:true}))
 // parses cookies attached to the incoming requests and makes them accessible in the req.cookies object.
 app.use(cookieParser())
 
+// create routes
+app.use("/api/users/",userRoute)
 
 const PORT = process.env.PORT || 5000
 
