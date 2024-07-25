@@ -63,8 +63,17 @@ const loginUser = async (req,res,next) => {
         })
     }
 }
-
+const logoutUser = async (req,res) => {
+    try {
+        // just clear the token stored inside cookies
+        res.cookie("jwt","",{maxAge : 1})
+        res.status(201).json({message : "User loged out succesfully!"})
+    } catch (err) {
+        res.status(500).json({error : `Error in logout: ${err.message}`})
+    }
+}
 export {
     signUpUser,
-    loginUser
+    loginUser,
+    logoutUser
 }
