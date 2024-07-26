@@ -144,4 +144,24 @@ const replyToPost = async (req, res, next) => {
     });
   }
 };
-export { createPost, getPost, deletePost, likeUnlikePost, replyToPost };
+const getFeedPosts = async (req, res, next) => {
+  try {
+    const following = req.user.following;
+    const feedPosts = await Post.find({ postedBy: { $in: following } }).sort({
+      createdAt: -1,
+    });
+    res.status(200).json(feedPosts);
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+export {
+  createPost,
+  getPost,
+  deletePost,
+  likeUnlikePost,
+  replyToPost,
+  getFeedPosts,
+};
