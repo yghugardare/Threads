@@ -3,6 +3,7 @@ import dotenv from  "dotenv"
 import { connectDb } from "./db/connectDb.js"
 import cookieParser from "cookie-parser"
 import { userRoute } from "./routes/user.route.js"
+import { postRoute } from "./routes/post.route.js"
 dotenv.config()
 connectDb()
     const app = express()
@@ -18,6 +19,7 @@ app.use(cookieParser())
 
 // create routes
 app.use("/api/users/",userRoute)
+app.use("/api/posts/",postRoute)
 
 const PORT = process.env.PORT || 5000
 
