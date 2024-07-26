@@ -59,8 +59,8 @@ const deletePost = async (req, res, next) => {
     // console.log(typeof post.postedBy," ",post.postedBy); //object   new ObjectId('66a38136d917d9f7ba53f218')
     // console.log(post.postedBy === req.user._id); // false
 
-    // will return false unless they reference the same object in memory. 
-    // In your case, both req.user._id and post.postedBy are ObjectId objects, 
+    // will return false unless they reference the same object in memory.
+    // In your case, both req.user._id and post.postedBy are ObjectId objects,
     // and although they contain the same value, they are different instances of ObjectId.
 
     if (req.user._id.toString() !== post.postedBy.toString()) {
@@ -78,4 +78,39 @@ const deletePost = async (req, res, next) => {
     });
   }
 };
-export { createPost, getPost, deletePost };
+const likeUnlikePost = async (req, res, next) => {
+  try {
+    const { id: postId } = req.params;
+    // get the post
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({
+        error: "POST not Found!",
+      });
+    }
+    const userId = req.user._id;
+
+    const alreadyLiked = post.likes.includes(userId);
+    if (alreadyLiked) {
+      // unlike the post
+      await Post.findByIdAndUpdate(postId, { $pull: { likes: userId } });
+      return res.status(200).json({
+        message: "Post Unliked!",
+      });
+    } else {
+      // like the post
+    //   await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
+      await Post.findByIdAndUpdate(postId, { $push: { likes: userId } });
+    //   post.likes.push(userId);
+    //   await post.save();
+      return res.status(200).json({
+        message: "Post Liked!",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+export { createPost, getPost, deletePost, likeUnlikePost };
