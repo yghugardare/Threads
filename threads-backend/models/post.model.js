@@ -20,7 +20,7 @@ const postSchema = new mongoose.Schema({
         ref : "User"
     },
     replies : [{
-        userid : {
+        userId : {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,

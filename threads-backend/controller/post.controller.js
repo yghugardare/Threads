@@ -99,10 +99,10 @@ const likeUnlikePost = async (req, res, next) => {
       });
     } else {
       // like the post
-    //   await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
+      //   await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
       await Post.findByIdAndUpdate(postId, { $push: { likes: userId } });
-    //   post.likes.push(userId);
-    //   await post.save();
+      //   post.likes.push(userId);
+      //   await post.save();
       return res.status(200).json({
         message: "Post Liked!",
       });
@@ -113,4 +113,35 @@ const likeUnlikePost = async (req, res, next) => {
     });
   }
 };
-export { createPost, getPost, deletePost, likeUnlikePost };
+const replyToPost = async (req, res, next) => {
+  try {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({
+        error: "Text field is required!",
+      });
+    }
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({
+        error: "Post not found!",
+      });
+    }
+    const { _id, profilePic, username } = req.user;
+    const reply = {
+      userId: _id,
+      userProfilePic: profilePic,
+      username: username,
+      text: text,
+    };
+    post.replies.push(reply);
+    await post.save();
+    res.status(200).json(reply);
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+export { createPost, getPost, deletePost, likeUnlikePost, replyToPost };
