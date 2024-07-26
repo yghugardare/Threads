@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { generateTokenAndSendCookies } from "../util/generateTokenAndSendCookies.js";
+import mongoose from "mongoose";
 const signUpUser = async (req, res, next) => {
   try {
     const { name, email, username, password } = req.body;
@@ -129,10 +130,10 @@ const updateUser = async (req, res, next) => {
         .status(400)
         .json({ error: "User not found!Please Login or Sign Up" });
     }
-    if(req.params.id !== userId.toString()){
+    if (req.params.id !== userId.toString()) {
       return res.status(400).json({
-        error : "You cannot update other users profile"
-      })
+        error: "You cannot update other users profile",
+      });
     }
     if (password) {
       // hash it and update
@@ -140,16 +141,16 @@ const updateUser = async (req, res, next) => {
       user.password = hashedPassword;
     }
     // update other field
-    user.name = name || user.name ;
+    user.name = name || user.name;
     user.email = email || user.email;
     user.username = username || user.username;
     user.profilePic = profilePic || user.profilePic;
-    user.bio = bio ||user.bio;
+    user.bio = bio || user.bio;
     // save
-    await user.save()
+    await user.save();
     // we dont want to send password as a response
     user.password = null;
-    res.status(200).json(user)
+    res.status(200).json(user);
   } catch (err) {
     console.log("Update user error!");
     res.status(500).json({
@@ -157,4 +158,27 @@ const updateUser = async (req, res, next) => {
     });
   }
 };
-export { signUpUser, loginUser, logoutUser, followUnfollowUser, updateUser };
+const getUserProfile = async (req, res, next) => {
+  try {
+    // query can either be a id or username of the user
+    const { query } = req.params;
+    let user;
+    if (mongoose.Types.ObjectId.isValid(query)) {
+      // get the user by the id
+      user = await User.findById({ _id: query })
+        .select("-updatedAt")
+        .select("-password");
+    } else {
+      // its the username
+      user = await User.findOne({ username: query })
+        .select("-updatedAt")
+        .select("-password");
+    }
+    if (!user) return res.status(404).json({ error: "User not Found!" });
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+    console.log("Error in geting User's Profile: ", err.message);
+  }
+};
+export { signUpUser, loginUser, logoutUser, followUnfollowUser, updateUser,getUserProfile };
