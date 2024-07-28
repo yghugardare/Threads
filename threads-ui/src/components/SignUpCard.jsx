@@ -22,6 +22,15 @@ import authScreenAtom from "../atoms/authAtom";
 export default function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
   const setAuthScreen = useSetRecoilState(authScreenAtom);
+  const [inputs, setInputs] = useState({
+    name: "",
+    email: "",
+    username: "",
+    password: "",
+  });
+  const signUp = () => {
+    console.log(inputs);
+  };
   return (
     <Flex align={"center"} justify={"center"} bg={useColorModeValue("", "")}>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
@@ -44,24 +53,44 @@ export default function SignupCard() {
               <Box>
                 <FormControl id="firstName" isRequired>
                   <FormLabel>Full Name</FormLabel>
-                  <Input type="text" />
+                  <Input
+                    type="text"
+                    onChange={(e) =>
+                      setInputs({ ...inputs, name: e.target.value })
+                    }
+                  />
                 </FormControl>
               </Box>
               <Box>
                 <FormControl id="lastName" isRequired>
                   <FormLabel>Username</FormLabel>
-                  <Input type="text" />
+                  <Input
+                    type="text"
+                    onChange={(e) =>
+                      setInputs({ ...inputs, username: e.target.value })
+                    }
+                  />
                 </FormControl>
               </Box>
             </HStack>
             <FormControl id="email" isRequired>
               <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+              <Input
+                type="email"
+                onChange={(e) =>
+                  setInputs({ ...inputs, email: e.target.value })
+                }
+              />
             </FormControl>
             <FormControl id="password" isRequired>
               <FormLabel>Password</FormLabel>
               <InputGroup>
-                <Input type={showPassword ? "text" : "password"} />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  onChange={(e) =>
+                    setInputs({ ...inputs, password: e.target.value })
+                  }
+                />
                 <InputRightElement h={"full"}>
                   <Button
                     variant={"ghost"}
@@ -83,6 +112,7 @@ export default function SignupCard() {
                 _hover={{
                   bg: "blue.500",
                 }}
+                onClick={signUp}
               >
                 Sign up
               </Button>

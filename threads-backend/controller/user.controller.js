@@ -89,7 +89,7 @@ const followUnfollowUser = async (req, res, next) => {
     let cId = String(currUser._id);
     if (cId === id)
       return res.status(400).json({
-        message: "You cannot follow/unfollow yourself",
+        error: "You cannot follow/unfollow yourself",
       });
     if (!personToFollowUnfollow || !currUser)
       return res.status(400).json({
