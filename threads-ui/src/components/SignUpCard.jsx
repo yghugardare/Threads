@@ -36,9 +36,11 @@ export default function SignupCard() {
     try {
       const res = await fetch("/api/users/signup", {
         method: "POST",
+        //  tells the server that the body of the request is formatted as JSON (JavaScript Object Notation).
         headers: {
           "Content-Type": "application/json",
         },
+        // convert the INPUTS[object] to JSOn
         body: JSON.stringify(inputs),
       });
       const data = await res.json();
