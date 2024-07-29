@@ -18,6 +18,7 @@ import usePreviewImg from "../hooks/usePreviewImg";
 
 function UpdateProfilePage() {
   const [user, setUser] = useRecoilState(userAtom);
+  const [updating, setUpdating] = useState(false);
   const [inputs, setInputs] = useState({
     name: user.name,
     username: user.username,
@@ -28,9 +29,35 @@ function UpdateProfilePage() {
   const fileRef = useRef();
   const showToast = useShowToast();
   const {handleImageChange,imgUrl}  = usePreviewImg();
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if(updating) return;
+    setUpdating(true);
+    try {
+      const res = await fetch(`/api/users/update/${user._id}`,{
+        method : "PUT",
+        headers : {
+          "Content-Type":"application/json",
+        },
+        body : JSON.stringify({...inputs,profilePic:imgUrl})
+      });
+      const data = await res.json();
+      if(data.error){
+        showToast("Error",data.error,"error");
+        return;
+      }
+      
+      localStorage.setItem("user-threads",JSON.stringify(data));
+      showToast("Success","Profile Updated Successfully","success");
+      setUser(data);
+    } catch (error) {
+      showToast("Error",error,"error");
+    }finally{
+      setUpdating(false);
+    }
+  }
   return (
-    <div>
+    <form onSubmit={handleSubmit}>
       <Flex align={"center"} justify={"center"}>
         <Stack
           bg={useColorModeValue("white", "gray.dark")}
@@ -139,13 +166,14 @@ function UpdateProfilePage() {
                 bg: "green.500",
               }}
               type="submit"
+              isLoading={updating}
             >
               Submit
             </Button>
           </Stack>
         </Stack>
       </Flex>
-    </div>
+    </form>
   );
 }
 

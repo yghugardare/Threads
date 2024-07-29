@@ -2,6 +2,8 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { generateTokenAndSendCookies } from "../util/generateTokenAndSendCookies.js";
 import mongoose from "mongoose";
+import { v2 as cloudinary } from "cloudinary";
+import { Post } from "../models/post.model.js";
 const signUpUser = async (req, res, next) => {
   try {
     const { name, email, username, password } = req.body;
@@ -121,7 +123,7 @@ const followUnfollowUser = async (req, res, next) => {
 
 const updateUser = async (req, res, next) => {
   try {
-    const { name, username, email, password, profilePic, bio } = req.body;
+    let { name, username, email, password, profilePic, bio } = req.body;
     const userId = req.user._id;
     // get user
     const user = await User.findById(userId);
@@ -140,6 +142,16 @@ const updateUser = async (req, res, next) => {
       const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword;
     }
+    if (profilePic) {
+      // if already there then delete the existing one
+			if (user.profilePic) {
+				await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
+			}
+
+			const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+			profilePic = uploadedResponse.secure_url;
+		}
+
     // update other field
     user.name = name || user.name;
     user.email = email || user.email;
@@ -148,6 +160,18 @@ const updateUser = async (req, res, next) => {
     user.bio = bio || user.bio;
     // save
     await user.save();
+    // Find all posts that this user replied and update username and userProfilePic fields
+		await Post.updateMany(
+			{ "replies.userId": userId },
+			{
+				$set: {
+					"replies.$[reply].username": user.username,
+					"replies.$[reply].userProfilePic": user.profilePic,
+				},
+			},
+			{ arrayFilters: [{ "reply.userId": userId }] }
+		);
+
     // we dont want to send password as a response
     user.password = null;
     res.status(200).json(user);
