@@ -11,10 +11,12 @@ import { protectRoute } from "../middlewares/protectedRoute.js";
 
 const userRoute = express.Router();
 
+userRoute.get("/profile/:query", getUserProfile);
+
 userRoute.post("/signup", signUpUser);
 userRoute.post("/login", loginUser);
 userRoute.post("/logout", logoutUser);
 userRoute.post("/follow/:id", protectRoute, followUnfollowUser);
 userRoute.put("/update/:id", protectRoute, updateUser);
-userRoute.get("/profile/:query", getUserProfile);
+
 export { userRoute };
