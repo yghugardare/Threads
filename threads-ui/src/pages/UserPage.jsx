@@ -31,7 +31,7 @@ function UserPage() {
   }
   return (
     <div>
-      <UserHeader />
+      <UserHeader user={user} />
       <UserPost
         likes={123}
         replies={30}
