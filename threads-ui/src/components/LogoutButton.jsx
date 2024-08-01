@@ -29,10 +29,11 @@ function LogoutButton() {
   };
   return (
     <Button
-      position={"fixed"}
-      top={"30px"}
-      right={"30px"}
-      size={"sm"}
+      // position={"fixed"}
+      // top={"30px"}
+      // right={"30px"}
+      size={"xs"}
+      // size={20}
       onClick={handleLogout}
     >
       <FiLogOut size={20} />
