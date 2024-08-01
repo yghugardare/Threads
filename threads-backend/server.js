@@ -15,7 +15,7 @@ cloudinary.config({
 });
 // global middlewares
 // parses the JSON payload of incoming requests and makes it accessible in req.body.
-app.use(express.json());
+app.use(express.json({limit:"50mb"}));
 // built-in middleware function in Express.js that parses incoming requests with URL-encoded payloads
 // extends:true => Supports nested objects and arrays.
 app.use(express.urlencoded({ extended: true }));

@@ -1,9 +1,9 @@
 import { Post } from "../models/post.model.js";
 import User from "../models/user.model.js";
-
+import { v2 as cloudinary } from "cloudinary";
 const createPost = async (req, res, next) => {
   try {
-    const { postedBy, text, img } = req.body;
+    let { postedBy, text, img } = req.body;
     if (!postedBy || !text) {
       return res.status(400).json({
         error: "Please fill the postedBy and text field",
@@ -21,12 +21,17 @@ const createPost = async (req, res, next) => {
         error: "You are not authorized for making this post",
       });
     }
+
     // text length validation
     const maxLenght = 500;
     if (text.length > maxLenght) {
       return res.status(400).json({
         error: `Text cannot be more than ${maxLenght} characters!`,
       });
+    }
+    if (img) {
+      const uploadResponse = await cloudinary.uploader.upload(img);
+      img = uploadResponse.secure_url;
     }
     const newPost = new Post({ postedBy, text, img });
     await newPost.save();
