@@ -16,5 +16,4 @@ postRoute.delete("/:id", protectRoute, deletePost);
 postRoute.post("/like/:id", protectRoute, likeUnlikePost);
 postRoute.post("/reply/:id", protectRoute, replyToPost);
 
-
 export { postRoute };

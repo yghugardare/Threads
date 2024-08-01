@@ -24,7 +24,7 @@ function UserPage() {
       }
     };
     getUser();
-  }, [username,showToast]);
+  }, [username, showToast]);
   if (!user) {
     // showToast("Error", "User not Found", "error");
     return null;
