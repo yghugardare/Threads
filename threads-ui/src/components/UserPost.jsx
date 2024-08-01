@@ -5,13 +5,12 @@ import { Link } from "react-router-dom";
 import Actions from "./Actions";
 import { useState } from "react";
 
-
 function UserPost({ likes, postTitle, postImg, replies }) {
   const [liked, setLiked] = useState(false);
   return (
     <Link to={"/username/post/12"}>
       {/* whole container */}
-      <Flex gap={3}  py={5} mb={4}>
+      <Flex gap={3} py={5} mb={4}>
         {/* Part 1 */}
         <Flex flexDirection={"column"} alignItems={"center"}>
           <Avatar size={"md"} name="Mark Zuckerberg" src="/zuck-avatar.png" />
@@ -57,27 +56,27 @@ function UserPost({ likes, postTitle, postImg, replies }) {
             {/* timeago and options */}
             <Flex gap={4} alignItems={"cneter"}>
               <Text color={"gray.light"}>1d</Text>
-            
-                <Flex 
+
+              <Flex
                 alignItems={"center"}
                 justifyContent={"center"}
                 borderRadius={"full"}
                 w={6}
                 h={6}
                 _hover={{
-                    background:"gray.100",
-                    color:"black"
-                }}>
+                  background: "gray.100",
+                  color: "black",
+                }}
+              >
                 <BsThreeDots />
-                </Flex>
-              
+              </Flex>
             </Flex>
           </Flex>
           {/* Box 2 */}
           <Text fontSize={"sm"}>{postTitle}</Text>
           {/* Box 3 */}
           {postImg && (
-            <Box  overflow={"hidden"} borderRadius={6}>
+            <Box overflow={"hidden"} borderRadius={6}>
               <Image src={postImg} w={"full"}></Image>
             </Box>
           )}
@@ -87,15 +86,13 @@ function UserPost({ likes, postTitle, postImg, replies }) {
           </Flex>
           {/* Box 5 */}
           <Flex gap={2} alignItems={"center"}>
-            <Text
-            color={"gray.light"}
-            fontSize={"sm"}
-            >{replies} replies</Text>
+            <Text color={"gray.light"} fontSize={"sm"}>
+              {replies} replies
+            </Text>
             <Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
-            <Text
-            color={"gray.light"}
-            fontSize={"sm"}
-            >{likes} likes</Text>
+            <Text color={"gray.light"} fontSize={"sm"}>
+              {likes} likes
+            </Text>
           </Flex>
         </Flex>
       </Flex>

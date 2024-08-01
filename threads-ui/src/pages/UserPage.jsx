@@ -3,11 +3,13 @@ import UserHeader from "../components/UserHeader";
 import UserPost from "../components/UserPost";
 import { useEffect, useState } from "react";
 import useShowToast from "../hooks/useShowToast";
+import { Flex, Spinner, Text } from "@chakra-ui/react";
 
 function UserPage() {
   const [user, setUser] = useState(null);
   const { username } = useParams();
   const showToast = useShowToast();
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -21,13 +23,23 @@ function UserPage() {
         setUser(data);
       } catch (error) {
         showToast("Error", error, "error");
+      } finally {
+        setLoading(false);
       }
     };
     getUser();
   }, [username, showToast]);
-  if (!user) {
+  if (!user && loading) {
     // showToast("Error", "User not Found", "error");
-    return null;
+    return (
+      <Flex justifyContent={"center"} alignItems={"center"}>
+        <Spinner size={"xl"} />
+      </Flex>
+    );
+  }
+  if (!user && !loading) {
+    // showToast("Error", "User not Found", "error");
+    return <Text size={"xl"}>User not fount!</Text>;
   }
   return (
     <div>

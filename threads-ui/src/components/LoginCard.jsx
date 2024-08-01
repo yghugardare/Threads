@@ -27,7 +27,7 @@ export default function LogInCard() {
     username: "",
     password: "",
   });
-  // eslint-disable-next-line no-unused-vars
+
   const [loading, setLoading] = useState(false);
   const setAuthScreen = useSetRecoilState(authScreenAtom);
   const setUser = useSetRecoilState(userAtom);
@@ -101,6 +101,7 @@ export default function LogInCard() {
             </FormControl>
             <Stack spacing={5}>
               <Button
+                isLoading={loading}
                 bg={"blue.400"}
                 color={"white"}
                 marginTop={1}

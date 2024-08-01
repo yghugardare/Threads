@@ -32,7 +32,9 @@ export default function SignupCard() {
   });
   const showToast = useShowToast();
   const setUser = useSetRecoilState(userAtom);
+  const [loading, setLoading] = useState(false);
   const signUp = async () => {
+    setLoading(true);
     try {
       const res = await fetch("/api/users/signup", {
         method: "POST",
@@ -50,9 +52,10 @@ export default function SignupCard() {
       }
       localStorage.setItem("user-threads", JSON.stringify(data));
       setUser(data);
-
     } catch (err) {
       showToast("Error", err, "error");
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -129,6 +132,7 @@ export default function SignupCard() {
             </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
+                isLoading={loading}
                 loadingText="Submitting"
                 size="lg"
                 bg={"blue.400"}
