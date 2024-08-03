@@ -73,7 +73,7 @@ function UserHeader({ user }) {
       } else {
         showToast("Success", `Followed ${user.name}!`, "success");
         // just to show the immedite effect
-        user.followers.push(currentUser._id);
+        user.followers.push(currentUser?._id);
       }
       setFollowing((following) => !following);
     } catch (error) {
