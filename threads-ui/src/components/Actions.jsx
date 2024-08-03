@@ -21,15 +21,15 @@ import useShowToast from "../hooks/useShowToast";
 
 const Actions = ({ post: post_ }) => {
   const user = useRecoilValue(userAtom);
-  const [liked, setLiked] = useState(post_.likes.includes(user?._id));
+  const [liked, setLiked] = useState(post_?.likes.includes(user?._id));
   const [post, setPost] = useState(post_);
   // const [posts, setPosts] = useRecoilState(postsAtom);
   const [isLiking, setIsLiking] = useState(false);
-  // const [isReplying, setIsReplying] = useState(false);
-  // const [reply, setReply] = useState("");
+  const [isReplying, setIsReplying] = useState(false);
+  const [reply, setReply] = useState("");
 
   const showToast = useShowToast();
-  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const handleLikeAndUnlike = async () => {
     if (!user) {
       showToast("Error", "You must be logged in to like a post", "error");
@@ -104,7 +104,37 @@ const Actions = ({ post: post_ }) => {
   // 		setIsLiking(false);
   // 	}
   // };
+	const handleReply = async ()=>{
+		if(!user){
+			showToast("Error", "You must be logged in to reply to a post", "error");
+			return;
+		}
+		if(isReplying) return;
+		setIsReplying(true)
+		try {
+			const res = await fetch(`/api/posts/reply/${post._id}`,{
+				method : 'PUT',
+				headers : {
+					"Content-Type":"application/json",
+				},
+				body : JSON.stringify({text:reply})
+			});
+			const data = await res.json();
+			if(data.error){
+				showToast("Error",data.error,"error");
+				return;
+			}
+			setPost({...post,replies : [...post.replies,data.reply]})
+			showToast("Success","Reply to the post added!","success");
+			setReply("");
+			onClose();
 
+		} catch (error) {
+			showToast("Error",error,"error");
+		}finally{
+			setIsReplying(false);
+		}
+	}
   // const handleReply = async () => {
   // 	if (!user) return showToast("Error", "You must be logged in to reply to a post", "error");
   // 	if (isReplying) return;
@@ -165,7 +195,7 @@ const Actions = ({ post: post_ }) => {
           role="img"
           viewBox="0 0 24 24"
           width="20"
-          // onClick={}
+          onClick={onOpen}
         >
           <title>Comment</title>
           <path
@@ -183,15 +213,15 @@ const Actions = ({ post: post_ }) => {
 
       <Flex gap={2} alignItems={"center"}>
         <Text color={"gray.light"} fontSize="sm">
-          {post.replies.length} replies
+          {post?.replies.length} replies
         </Text>
         <Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
         <Text color={"gray.light"} fontSize="sm">
-          {post.likes.length} likes
+          {post?.likes.length} likes
         </Text>
       </Flex>
 
-      <Modal>
+      <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader></ModalHeader>
@@ -200,14 +230,17 @@ const Actions = ({ post: post_ }) => {
             <FormControl>
               <Input
                 placeholder="Reply goes here.."
-                value={"gh"}
-                // onChange={(e) => setReply(e.target.value)}
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
               />
             </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" size={"sm"} mr={3}></Button>
+            <Button colorScheme="blue" size={"sm"} mr={3}
+			onClick={handleReply}
+			isLoading={isReplying}
+			>Reply</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
