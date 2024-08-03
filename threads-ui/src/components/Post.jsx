@@ -119,6 +119,11 @@ function Post({post,postedBy}) {
         <Flex gap={3} my={1}>
           <Actions liked={liked} setLiked={setLiked} />
         </Flex>
+        <Flex gap={2} alignItems={"center"}>
+          <Text color={"gray.light"} fontSize={"sm"}>
+            {post.replies.length} replies
+          </Text>
+        </Flex>
       </Flex>
     </Flex>
   </Link>
