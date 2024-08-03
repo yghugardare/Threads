@@ -162,7 +162,27 @@ const getFeedPosts = async (req, res, next) => {
     });
   }
 };
+
+// get all users post in his profile page
+const getUserPosts = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "User Not Found" });
+    }
+    const posts = await Post.find({ postedBy: user._id }).sort({
+      createdAt: -1,
+    });
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+};
 export {
+  getUserPosts,
   createPost,
   getPost,
   deletePost,
