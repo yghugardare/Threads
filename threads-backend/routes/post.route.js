@@ -13,7 +13,7 @@ postRoute.get("/feed", protectRoute, getFeedPosts);
 postRoute.post("/create", protectRoute, createPost);
 postRoute.get("/:id", getPost);
 postRoute.delete("/:id", protectRoute, deletePost);
-postRoute.post("/like/:id", protectRoute, likeUnlikePost);
-postRoute.post("/reply/:id", protectRoute, replyToPost);
+postRoute.put("/like/:id", protectRoute, likeUnlikePost);
+postRoute.put("/reply/:id", protectRoute, replyToPost);
 
 export { postRoute };
