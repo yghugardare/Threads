@@ -13,6 +13,7 @@ import {
   ModalOverlay,
   Text,
   Textarea,
+  useColorMode,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -24,14 +25,26 @@ import userAtom from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
 const MAX_CHAR = 500;
 function CreatePost() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [postText, setPostText] = useState("");
-  const imageRef = useRef(null);
-  const { handleImageChange, imgUrl, setImgUrl } = usePreviewImg();
+   // Recoil state
+   const user = useRecoilValue(userAtom);
+  // Initialize state hooks
   const [remaingChars, setRemaingChars] = useState(MAX_CHAR);
   const [loading, setLoading] = useState(false);
+  const [postText, setPostText] = useState("");
+
+  // Initialize ref hooks
+  const imageRef = useRef(null);
+
+  // Custom hooks
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { handleImageChange, imgUrl, setImgUrl } = usePreviewImg();
   const showToast = useShowToast();
-  const user = useRecoilValue(userAtom);
+  const {colorMode} = useColorMode();
+
+ 
+
+ 
+ 
   const handleTextChange = (e) => {
     const inputText = e.target.value;
     if (inputText.length > MAX_CHAR) {
@@ -72,6 +85,7 @@ function CreatePost() {
       setLoading(false);
     }
   };
+  
   return (
     <div>
       <Button
@@ -79,7 +93,7 @@ function CreatePost() {
         bottom={10}
         right={5}
         size={{ base: "sm", sm: "md" }}
-        bg={useColorModeValue("gray.300", "gray.600")}
+        bg={colorMode === "dark" ? "gray.600" : "gray.300"}
         onClick={onOpen}
       >
         <AddIcon /> &nbsp; Post

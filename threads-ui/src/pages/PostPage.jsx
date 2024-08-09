@@ -3,10 +3,15 @@ import { BsThreeDots } from "react-icons/bs";
 import Actions from "../components/Actions";
 import { useState } from "react";
 import Comments from "../components/Comments";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import useGetUserProfile from "../hooks/useGetUserProfile";
 
 function PostPage() {
   const[liked,setLiked]= useState(false)
+  const {loading,user} = useGetUserProfile();
   const {colorMode} = useColorMode()
+ 
   return (
     <>
       {/* Part 1 */}

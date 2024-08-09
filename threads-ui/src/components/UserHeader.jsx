@@ -35,6 +35,7 @@ function UserHeader({ user }) {
   function copyUrl() {
     const currentUrl = window.location.href;
     navigator.clipboard.writeText(currentUrl).then(() => {
+      
       toast({
         title: "URL Copied",
         description: "Profile URL copied to clipboard",

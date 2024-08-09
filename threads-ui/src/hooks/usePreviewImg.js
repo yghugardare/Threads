@@ -4,6 +4,7 @@ import useShowToast from "./useShowToast";
 const usePreviewImg = () => {
   const [imgUrl, setImgUrl] = useState(null);
   const showToast = useShowToast();
+
   // create a function that converts the file[image] to a base64 url
   const handleImageChange = (e) => {
     // get the file selected by user
