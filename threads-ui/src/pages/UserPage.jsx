@@ -7,13 +7,16 @@ import { Flex, Spinner, Text } from "@chakra-ui/react";
 import Post from "../components/Post";
 import useGetUserProfile from "../hooks/useGetUserProfile";
 import { useParams } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import postsAtom from "../atoms/postsAtom";
 
 function UserPage() {
   // const [user, setUser] = useState(null);
   const { username } = useParams();
   const showToast = useShowToast();
   // const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useRecoilState(postsAtom);
+
   const [fetchingPosts, setFetchingPosts] = useState(true);
   const {user,loading} = useGetUserProfile();
   useEffect(() => {
@@ -37,8 +40,9 @@ function UserPage() {
       }
     };
     // getUser();
+    // console.log(posts)
     getPosts();
-  }, [showToast,username]);
+  }, [showToast,username,setPosts]);
   if (!user && loading) {
     // showToast("Error", "User not Found", "error");
     return (
@@ -61,7 +65,7 @@ function UserPage() {
         </Flex>
       )}
       {posts.map((post) => (
-        <Post key={post._id} post={post} postedBy={post.postedBy} />
+        <Post post={post} postedBy={post.postedBy} key={post._id+post.createdAt} />
       ))}
     </div>
   );

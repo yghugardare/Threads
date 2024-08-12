@@ -1,6 +1,6 @@
 import { Flex, Image, useColorMode } from "@chakra-ui/react";
 import userAtom from "../atoms/userAtom";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Link } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
 import { RxAvatar } from "react-icons/rx";
@@ -8,10 +8,12 @@ import { RxAvatar } from "react-icons/rx";
 import { BsFillChatQuoteFill } from "react-icons/bs";
 import { MdOutlineSettings } from "react-icons/md";
 import LogoutButton from "./LogoutButton";
+import authScreenAtom from "../atoms/authAtom";
 
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   const user = useRecoilValue(userAtom);
+  const setAuthScreen = useSetRecoilState(authScreenAtom);
   return (
     <Flex justifyContent={"space-between"} mt={6} mb={12}>
       {user && (
@@ -19,6 +21,13 @@ function Header() {
           <AiFillHome size={24} />
         </Link>
       )}
+      {
+        !user && (
+          <Link 
+          to={"/auth"}
+          onClick={()=>setAuthScreen("login")}>Login</Link>
+        )
+      }
       <Image
         cursor={"pointer"}
         src={colorMode === "dark" ? "/light-logo.svg" : "/dark-logo.svg"}
@@ -39,6 +48,11 @@ function Header() {
           <LogoutButton />
         </Flex>
       )}
+      {
+        !user && (
+          <Link onClick={()=>setAuthScreen("signup")} to={"/auth"}>Sign Up</Link>
+        )
+      }
     </Flex>
   );
 }
