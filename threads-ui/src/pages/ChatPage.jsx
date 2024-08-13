@@ -67,7 +67,7 @@ function ChatPage() {
   // eslint-disable-next-line no-unused-vars
   const [loadingConversations, setLoadingConversations] = useState(false);
   // eslint-disable-next-line no-unused-vars
-  const [selectedConversation, setSelectedConversation] = useState(false);
+  const [selectedConversation, setSelectedConversation] = useState(true);
   return (
     <Box
       position={"absolute"}
@@ -75,7 +75,7 @@ function ChatPage() {
       w={{ base: "100%", md: "80%", lg: "750px" }}
       p={4}
       transform={"translateX(-50%)"}
-      border={"1px solid red"}
+      // border={"1px solid red"}
     >
       <Flex
         gap={4}
