@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { userRoute } from "./routes/user.route.js";
 import { postRoute } from "./routes/post.route.js";
 import { v2 as cloudinary } from "cloudinary";
+import { messageRouter } from "./routes/message.route.js";
 dotenv.config();
 connectDb();
 const app = express();
@@ -25,6 +26,7 @@ app.use(cookieParser());
 // create routes
 app.use("/api/users/", userRoute);
 app.use("/api/posts/", postRoute);
+app.use("/api/messages",messageRouter)
 
 const PORT = process.env.PORT || 5000;
 
