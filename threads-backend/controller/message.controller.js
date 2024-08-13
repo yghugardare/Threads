@@ -8,6 +8,8 @@ const sendMessage = async (req, res) => {
     const { recipientId, message } = req.body;
     const senderId = req.user._id;
     let conversation = await Conversation.findOne({
+      // get conversation which has participants array which contains
+      //  senderId AND recipientId
       participants: { $all: [senderId, recipientId] },
     });
     if (!conversation) {
@@ -44,6 +46,8 @@ const getMessage = async (req, res) => {
   const userId = req.user._id;
   try {
     let conversation = await Conversation.findOne({
+      // get conversation which has participants array which contains
+      //  userId AND otherUserId
       participants: { $all: [userId, otherUserId] },
     });
     if (!conversation) {
@@ -57,4 +61,19 @@ const getMessage = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-export { sendMessage,getMessage };
+const getConversations = async (req, res) => {
+  const userId = req.user._id;
+  try {
+    const conversations = await Conversation.find({
+      // get conversations where participants array contains only the user id
+      participants: userId,
+    }).populate({
+      path: "participants", // refering to user model
+      select: "username profilePic", // geting this fields from user model
+    });
+    res.status(200).json(conversations);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+export { sendMessage, getMessage, getConversations };
