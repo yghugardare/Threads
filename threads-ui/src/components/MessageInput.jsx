@@ -1,4 +1,5 @@
-import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+/* eslint-disable react/prop-types */
+import { Input, InputGroup, InputRightElement, Spinner } from "@chakra-ui/react";
 import { IoSendSharp } from "react-icons/io5";
 import useShowToast from "../hooks/useShowToast";
 import { useState } from "react";
@@ -65,8 +66,12 @@ function MessageInput({ setMessages }) {
         }
         value={messageText}
         />
-        <InputRightElement cursor={"pointer"} onClick={handleSendMessage}>
-          <IoSendSharp />
+        <InputRightElement cursor={"pointer"} onClick={handleSendMessage} >
+        {!isSending ? (
+								<IoSendSharp size={24} cursor={"pointer"} onClick={handleSendMessage} />
+							) : (
+								<Spinner size={"md"} />
+							)}
         </InputRightElement>
       </InputGroup>
     </form>

@@ -35,14 +35,15 @@ function Conversation({ conversation, isOnline }) {
       }}
       borderRadius={"md"}
       bg={
-				selectedConversation?._id === conversation._id ? (colorMode === "light" ? "gray.400" : "gray.dark") : ""
+				selectedConversation?._id === conversation._id ? (colorMode === "light" ? "gray.200" : "gray.dark") : ""
 			}
       onClick={()=>{
         setSelectedConversation({
           _id : conversation._id,
           userId : user._id,
           userProfilePic : user.profilePic,
-          username : user.username
+          username : user.username,
+          mock : conversation.mock
         })
       }}
     >

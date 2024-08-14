@@ -60,6 +60,7 @@ import userAtom from "../atoms/userAtom";
 function MessageContainer() {
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [messages, setMessages] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [selectedConversation, setSelectedConversation] = useRecoilState(
     selectedConversations
   );
@@ -68,6 +69,8 @@ function MessageContainer() {
   useEffect(() => {
     const getMessages = async () => {
       try {
+        // in case of new user
+        if(selectedConversation.mock) return;
         // other user id is userid of the selected conversation
         const res = await fetch(`/api/messages/${selectedConversation.userId}`);
         const data = await res.json();
