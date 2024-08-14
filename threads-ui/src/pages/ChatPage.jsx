@@ -14,7 +14,7 @@ import { GiConversation } from "react-icons/gi";
 import Conversation from "../components/Conversation";
 import MessageContainer from "../components/MessageContainer";
 import { useRecoilState } from "recoil";
-import { conversationsAtom } from "../atoms/messagesAtom";
+import { conversationsAtom, selectedConversations } from "../atoms/messagesAtom";
 import useShowToast from "../hooks/useShowToast";
 // const conversations1 = [
 //   {
@@ -68,8 +68,7 @@ import useShowToast from "../hooks/useShowToast";
 // ];
 function ChatPage() {
   const [loadingConversations, setLoadingConversations] = useState(true);
-  // eslint-disable-next-line no-unused-vars
-  const [selectedConversation, setSelectedConversation] = useState(true);
+  const [selectedConversation, setSelectedConversation] = useRecoilState(selectedConversations);
   const [conversations, setConversations] = useRecoilState(conversationsAtom);
   const showToast = useShowToast();
   useEffect(() => {
@@ -155,7 +154,7 @@ function ChatPage() {
               />
             ))}
         </Flex>
-        {!selectedConversation && (
+        {!selectedConversation._id && (
           <Flex
             flex={70}
             // border={"1px solid blue"}
@@ -170,7 +169,7 @@ function ChatPage() {
             <Text fontSize={20}>Select a conversation to start messaging</Text>
           </Flex>
         )}
-        {selectedConversation && <MessageContainer />}
+        {selectedConversation._id && <MessageContainer />}
       </Flex>
     </Box>
   );
