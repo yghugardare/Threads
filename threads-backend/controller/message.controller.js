@@ -71,6 +71,12 @@ const getConversations = async (req, res) => {
       path: "participants", // refering to user model
       select: "username profilePic", // geting this fields from user model
     });
+    // remove the current user from the partcipants array
+    conversations.forEach((conversation) => {
+			conversation.participants = conversation.participants.filter(
+				(participant) => participant._id.toString() !== userId.toString()
+			);
+		});
     res.status(200).json(conversations);
   } catch (error) {
     return res.status(500).json({ error: error.message });

@@ -11,11 +11,13 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import { BsCheck2All, BsFillImageFill } from "react-icons/bs";
+import { useRecoilValue } from "recoil";
+import userAtom from "../atoms/userAtom";
 
 function Conversation({ conversation, isOnline }) {
   const user = conversation?.participants[0];
   const lastMessage = conversation.lastMessage;
-  const currentUser = { _id: 71 };
+  const currentUser = useRecoilValue(userAtom);
   // console.log()
   return (
     <Flex
@@ -46,7 +48,8 @@ function Conversation({ conversation, isOnline }) {
         <Text fontWeight={700} display={"flex"} alignItems={"center"}>
           {user.username} <Image src="/verified.png" w={4} h={4} ml={1} />
         </Text>
-        <Text fontSize={"xs"} display={"flex"} alignItems={"ceter"} gap={1}>
+        {/* we had a text here, but due to validateDomError p cannot have div or p as descendant */}
+        <Box fontSize={"xs"} display={"flex"} alignItems={"ceter"} gap={1}>
           {currentUser._id === lastMessage.sender && (
             <Box color={lastMessage.seen && "blue.400"}>
               <BsCheck2All size={16} />
@@ -55,7 +58,7 @@ function Conversation({ conversation, isOnline }) {
           {lastMessage.text.length > 18
             ? lastMessage.text.substring(0, 18) + "..."
             : lastMessage.text || <BsFillImageFill size={16} />}
-        </Text>
+        </Box>
       </Stack>
     </Flex>
   );

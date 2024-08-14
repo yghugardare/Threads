@@ -9,65 +9,89 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GiConversation } from "react-icons/gi";
 import Conversation from "../components/Conversation";
 import MessageContainer from "../components/MessageContainer";
-const conversations = [
-  {
-    _id: 1,
-    isOnline: true,
-    selectedConversation: false,
-    lastMessage: {
-      sender: 68,
-      seen: false,
-      text: "In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:",
-    },
-    participants: [
-      { username: "john", _id: 10, profilePic: "https://bit.ly/sage-adebayo" },
-    ],
-  },
-  {
-    _id: 2,
-    isOnline: false,
-    selectedConversation: true,
-    lastMessage: {
-      sender: 69,
-      seen: true,
-      text: "In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:",
-    },
-    participants: [{ username: "om", _id: 11, profilePic: "" }],
-  },
-  {
-    _id: 3,
-    isOnline: true,
-    selectedConversation: true,
-    lastMessage: {
-      sender: 70,
-      seen: false,
-      text: "In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:",
-    },
-    participants: [
-      { username: "ram", _id: 12, profilePic: "https://bit.ly/kent-c-dodds" },
-    ],
-  },
-  {
-    _id: 4,
-    isOnline: false,
-    selectedConversation: false,
-    lastMessage: {
-      sender: 71,
-      seen: true,
-      text: "Hi",
-    },
-    participants: [{ username: "sia", _id: 13, profilePic: "" }],
-  },
-];
+import { useRecoilState } from "recoil";
+import { conversationsAtom } from "../atoms/messagesAtom";
+import useShowToast from "../hooks/useShowToast";
+// const conversations1 = [
+//   {
+//     _id: 1,
+//     isOnline: true,
+//     selectedConversation: false,
+//     lastMessage: {
+//       sender: 68,
+//       seen: false,
+//       text: "In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:",
+//     },
+//     participants: [
+//       { username: "john", _id: 10, profilePic: "https://bit.ly/sage-adebayo" },
+//     ],
+//   },
+//   {
+//     _id: 2,
+//     isOnline: false,
+//     selectedConversation: true,
+//     lastMessage: {
+//       sender: 69,
+//       seen: true,
+//       text: "In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:",
+//     },
+//     participants: [{ username: "om", _id: 11, profilePic: "" }],
+//   },
+//   {
+//     _id: 3,
+//     isOnline: true,
+//     selectedConversation: true,
+//     lastMessage: {
+//       sender: 70,
+//       seen: false,
+//       text: "In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:In some products, you might need to show a badge on the right corner of the avatar. We call this a badge. Here's an example that shows if the user is online:",
+//     },
+//     participants: [
+//       { username: "ram", _id: 12, profilePic: "https://bit.ly/kent-c-dodds" },
+//     ],
+//   },
+//   {
+//     _id: 4,
+//     isOnline: false,
+//     selectedConversation: false,
+//     lastMessage: {
+//       sender: 71,
+//       seen: true,
+//       text: "Hi",
+//     },
+//     participants: [{ username: "sia", _id: 13, profilePic: "" }],
+//   },
+// ];
 function ChatPage() {
-  // eslint-disable-next-line no-unused-vars
-  const [loadingConversations, setLoadingConversations] = useState(false);
+  const [loadingConversations, setLoadingConversations] = useState(true);
   // eslint-disable-next-line no-unused-vars
   const [selectedConversation, setSelectedConversation] = useState(true);
+  const [conversations, setConversations] = useRecoilState(conversationsAtom);
+  const showToast = useShowToast();
+  useEffect(() => {
+    const getConversations = async () => {
+      try {
+        const res = await fetch("api/messages/conversations");
+        const data = await res.json();
+        if (data.error) {
+          showToast("Error", data.error, "error");
+          return;
+        }
+        console.log(data)
+        setConversations(data);
+      } catch (error) {
+        showToast("Error", error.message, "error");
+      } finally {
+        setLoadingConversations(false);
+      }
+    };
+    getConversations();
+  }, [showToast, setConversations]);
+
   return (
     <Box
       position={"absolute"}
@@ -126,7 +150,7 @@ function ChatPage() {
             conversations.map((conversation) => (
               <Conversation
                 key={conversation._id}
-                isOnline={conversation.isOnline}
+                isOnline={true}
                 conversation={conversation}
               />
             ))}
