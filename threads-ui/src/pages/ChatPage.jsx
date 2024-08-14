@@ -16,6 +16,7 @@ import MessageContainer from "../components/MessageContainer";
 import { useRecoilState } from "recoil";
 import { conversationsAtom, selectedConversations } from "../atoms/messagesAtom";
 import useShowToast from "../hooks/useShowToast";
+
 // const conversations1 = [
 //   {
 //     _id: 1,
@@ -70,6 +71,7 @@ function ChatPage() {
   const [loadingConversations, setLoadingConversations] = useState(true);
   const [selectedConversation, setSelectedConversation] = useRecoilState(selectedConversations);
   const [conversations, setConversations] = useRecoilState(conversationsAtom);
+  
   const showToast = useShowToast();
   useEffect(() => {
     const getConversations = async () => {
@@ -80,7 +82,7 @@ function ChatPage() {
           showToast("Error", data.error, "error");
           return;
         }
-        console.log(data)
+        // console.log(data)
         setConversations(data);
       } catch (error) {
         showToast("Error", error.message, "error");

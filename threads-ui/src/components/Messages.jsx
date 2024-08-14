@@ -2,14 +2,19 @@
 import { Avatar, Box, Flex, Image, Skeleton, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { BsCheck2All } from "react-icons/bs";
-const user = {
-    profilePic : ""
-}
-const selectedConversation = {
-    profilePic : ""
-}
+import { useRecoilValue } from "recoil";
+import { selectedConversations } from "../atoms/messagesAtom";
+import userAtom from "../atoms/userAtom";
+// const user = {
+//     profilePic : ""
+// }
+// // const selectedConversation = {
+// //     profilePic : ""
+// // }
 function Messages({ message, ownMessage }) {
   const [imgLoaded, setImgLoaded] = useState(true);
+  const selectedConversation = useRecoilValue(selectedConversations);
+  const user = useRecoilValue(userAtom)
   return (
 		<>
 			{ownMessage ? (
