@@ -123,6 +123,10 @@ function MessageContainer() {
     };
     getMessages();
   }, [showToast, selectedConversation.userId, selectedConversation.mock]);
+  // whenever there is new message scroll down to end message smoothly
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
   return (
     <Flex
       flex={70}
@@ -169,7 +173,16 @@ function MessageContainer() {
           ))}
         {!loadingMessages &&
           messages.map((message) => (
-            <Flex key={message._id} direction={"column"}>
+            <Flex
+              key={message._id}
+              direction={"column"}
+              // binding the messageEndRef to the last message
+              ref={
+                messages.length - 1 === messages.indexOf(message)
+                  ? messageEndRef
+                  : null
+              }
+            >
               <Messages
                 message={message}
                 ownMessage={currentUser._id === message.sender}
