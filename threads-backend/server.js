@@ -6,9 +6,10 @@ import { userRoute } from "./routes/user.route.js";
 import { postRoute } from "./routes/post.route.js";
 import { v2 as cloudinary } from "cloudinary";
 import { messageRouter } from "./routes/message.route.js";
+import { app, server } from "./socket/socket.js";
 dotenv.config();
 connectDb();
-const app = express();
+// const app = express();
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -26,10 +27,10 @@ app.use(cookieParser());
 // create routes
 app.use("/api/users/", userRoute);
 app.use("/api/posts/", postRoute);
-app.use("/api/messages",messageRouter)
+app.use("/api/messages", messageRouter);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is Running at http://localhost:${PORT}`);
 });
