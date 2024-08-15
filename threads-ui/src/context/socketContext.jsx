@@ -5,32 +5,38 @@ import userAtom from "../atoms/userAtom";
 import { io } from "socket.io-client";
 const SocketContext = createContext();
 
+export const useSocket = () => {
+	return useContext(SocketContext);
+};
+
 export const SocketContextProvider = ({ children }) => {
-    const [socket, setSocket] = useState(null);
-    const user = useRecoilValue(userAtom);
-    useEffect(()=>{
-        // handling connection to api
-        // http://localhost:8000/:userId
-        const socket = io("http://localhost:8000",{
-            query : {
-                userId : user?._id
-            }
-    })
-    setSocket(socket)
+  const [socket, setSocket] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const user = useRecoilValue(userAtom);
+  useEffect(() => {
+    // handling connection to api
+    // http://localhost:8000/:userId
+    const socket = io("http://localhost:8000", {
+      query: {
+        userId: user?._id,
+      },
+    });
+    setSocket(socket);
+    // listen for getOnlineUsers event
+    socket.on("getOnlineUsers", (users) => {
+      setOnlineUsers(users);
+    });
     // handling disconnection
     // if socket is not null
-    return ()=>  socket && socket.close()
-    },[user?._id])
+    return () => socket && socket.close();
+  }, [user?._id]);
+  console.log(onlineUsers, " are online");
 
   return (
-    <SocketContext.Provider value={{socket}}>
+    <SocketContext.Provider value={{ socket, onlineUsers }}>
       {children}
       {/* <div></div> */}
     </SocketContext.Provider>
   );
 };
-// to access the value of the socket
-// we use useSocket
-export const useSocket = () => {
-  return useContext(SocketContext);
-}
+

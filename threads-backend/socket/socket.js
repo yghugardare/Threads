@@ -10,10 +10,22 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+const userSocketMap = {}; // userId : socketId
 io.on("connection", (socket) => {
   console.log("user connected", socket.id);
-  socket.on("disconnect",()=>{
-    console.log("user disconnected")
-  })
+  // fetching the user id from client
+  const userId = socket.handshake.query.userId;
+  // we use hashmap to store the user id
+  if (userId != "undefined") userSocketMap[userId] = socket.id;
+  // for an event "getOnlineUsers" send array of keys of the userSocketMap object
+  // to all the users
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+    // remove the user id from the map
+    delete userSocketMap[userId];
+    // emit the same getOnlineUsers event
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  });
 });
 export { io, server, app };
