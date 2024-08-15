@@ -21,7 +21,7 @@ function Conversation({ conversation, isOnline }) {
   const lastMessage = conversation.lastMessage;
   const currentUser = useRecoilValue(userAtom);
   const [selectedConversation, setSelectedConversation] = useRecoilState(selectedConversations);
-  const colorMode = useColorMode()
+  const {colorMode} = useColorMode()
   // console.log()
   return (
     <Flex
@@ -30,12 +30,12 @@ function Conversation({ conversation, isOnline }) {
       p={1}
       _hover={{
         cursor: "pointer",
-        bg: useColorModeValue("gray.600", "gray.dark"),
+        bg: useColorModeValue("gray.500", "gray.dark"),
         color: "white",
       }}
       borderRadius={"md"}
       bg={
-				selectedConversation?._id === conversation._id ? (colorMode === "light" ? "gray.200" : "gray.dark") : ""
+				selectedConversation?._id === conversation._id && (colorMode === "light" ? "gray.300" : "gray.dark") 
 			}
       onClick={()=>{
         setSelectedConversation({
