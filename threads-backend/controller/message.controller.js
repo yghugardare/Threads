@@ -2,6 +2,7 @@ import { Post } from "../models/post.model.js";
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import Conversation from "../models/conversation.model.js";
+import { getRecipientSocketId, io } from "../socket/socket.js";
 
 const sendMessage = async (req, res) => {
   try {
@@ -36,6 +37,10 @@ const sendMessage = async (req, res) => {
         },
       }),
     ]);
+    const recipientSocketId = getRecipientSocketId(recipientId);
+    if (recipientSocketId) {
+      io.to(recipientSocketId).emit("newMessage", newMessage);
+    }
     res.status(201).json(newMessage);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -73,10 +78,10 @@ const getConversations = async (req, res) => {
     });
     // remove the current user from the partcipants array
     conversations.forEach((conversation) => {
-			conversation.participants = conversation.participants.filter(
-				(participant) => participant._id.toString() !== userId.toString()
-			);
-		});
+      conversation.participants = conversation.participants.filter(
+        (participant) => participant._id.toString() !== userId.toString()
+      );
+    });
     res.status(200).json(conversations);
   } catch (error) {
     return res.status(500).json({ error: error.message });

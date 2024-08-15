@@ -8,13 +8,17 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Messages from "./Messages";
 import MessageInput from "./MessageInput";
-import { selectedConversations } from "../atoms/messagesAtom";
-import { useRecoilState,useRecoilValue } from "recoil";
+import {
+  conversationsAtom,
+  selectedConversations,
+} from "../atoms/messagesAtom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom";
+import { useSocket } from "../context/socketContext";
 
 // const selectedCoversation = {
 //   userProfilePic: "",
@@ -64,13 +68,44 @@ function MessageContainer() {
   const [selectedConversation, setSelectedConversation] = useRecoilState(
     selectedConversations
   );
-  const currentUser = useRecoilValue(userAtom)
+  const messageEndRef = useRef(null);
+  const currentUser = useRecoilValue(userAtom);
+  const { socket } = useSocket();
+  const setConversations = useSetRecoilState(conversationsAtom);
   const showToast = useShowToast();
+  useEffect(() => {
+    socket.on("newMessage", (message) => {
+      // set messages only for selected conversation
+      if (selectedConversation._id === message.conversationId) {
+        setMessages((prev) => [...prev, message]);
+      }
+
+      setConversations((prev) => {
+        const updatedConversations = prev.map((conversation) => {
+          if (conversation._id === message.conversationId) {
+            // update last message of only the the person i am talking with
+            return {
+              ...conversation,
+              lastMessage: {
+                text: message.text,
+                sender: message.sender,
+              },
+            };
+          }
+          // rest dont
+          return conversation;
+        });
+        return updatedConversations;
+      });
+    });
+
+    return () => socket.off("newMessage");
+  }, [socket, selectedConversation, setConversations]);
   useEffect(() => {
     const getMessages = async () => {
       try {
         // in case of new user
-        if(selectedConversation.mock) return;
+        if (selectedConversation.mock) return;
         // other user id is userid of the selected conversation
         const res = await fetch(`/api/messages/${selectedConversation.userId}`);
         const data = await res.json();
@@ -87,11 +122,11 @@ function MessageContainer() {
       }
     };
     getMessages();
-  }, [showToast,selectedConversation.userId]);
+  }, [showToast, selectedConversation.userId, selectedConversation.mock]);
   return (
     <Flex
       flex={70}
-      bg={useColorModeValue("gray.200", "gray.dark")}
+      bg={useColorModeValue("gray.300", "gray.dark")}
       borderRadius={"md"}
       p={2}
       flexDirection={"column"}
@@ -116,13 +151,12 @@ function MessageContainer() {
         {loadingMessages &&
           [...Array(5)].map((el, i) => (
             <Flex
-            key={i}
+              key={i}
               gap={2}
               alignItems={"center"}
               p={1}
               borderRadius={"md"}
               alignSelf={i % 2 === 0 ? "flex-start" : "flex-end"}
-              
             >
               {i % 2 === 0 && <SkeletonCircle size={7} />}
               <Flex flexDir={"column"} gap={2}>
@@ -136,11 +170,14 @@ function MessageContainer() {
         {!loadingMessages &&
           messages.map((message) => (
             <Flex key={message._id} direction={"column"}>
-              <Messages message={message} ownMessage={currentUser._id === message.sender} />
+              <Messages
+                message={message}
+                ownMessage={currentUser._id === message.sender}
+              />
             </Flex>
           ))}
       </Flex>
-      <MessageInput setMessages={setMessages}/>
+      <MessageInput setMessages={setMessages} />
     </Flex>
   );
 }
