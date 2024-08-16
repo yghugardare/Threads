@@ -19,7 +19,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import useShowToast from "../hooks/useShowToast";
 import userAtom from "../atoms/userAtom";
 import { useSocket } from "../context/socketContext";
-
+import messageSound from "../assets/sounds/message.mp3";
 // const selectedCoversation = {
 //   userProfilePic: "",
 //   username: "Yash",
@@ -73,13 +73,19 @@ function MessageContainer() {
   const { socket } = useSocket();
   const setConversations = useSetRecoilState(conversationsAtom);
   const showToast = useShowToast();
+
   useEffect(() => {
     socket.on("newMessage", (message) => {
       // set messages only for selected conversation
       if (selectedConversation._id === message.conversationId) {
         setMessages((prev) => [...prev, message]);
       }
-
+      
+			// make a sound if the window is not focused
+			if (!document.hasFocus()) {
+				const sound = new Audio(messageSound);
+				sound.play();
+			}
       setConversations((prev) => {
         const updatedConversations = prev.map((conversation) => {
           if (conversation._id === message.conversationId) {
