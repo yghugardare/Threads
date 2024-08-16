@@ -243,7 +243,7 @@ function ChatPage() {
                 key={conversation._id}
                 // check if user we are chatting with is in the onlineUsers array
                 isOnline={onlineUsers.includes(
-                  conversation.participants[0]._id
+                  conversation.participants[0]?._id
                 )}
                 conversation={conversation}
               />

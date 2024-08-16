@@ -39,11 +39,11 @@ function Conversation({ conversation, isOnline }) {
 			}
       onClick={()=>{
         setSelectedConversation({
-          _id : conversation._id,
-          userId : user._id,
-          userProfilePic : user.profilePic,
-          username : user.username,
-          mock : conversation.mock
+          _id : conversation?._id,
+          userId : user?._id,
+          userProfilePic : user?.profilePic,
+          username : user?.username,
+          mock : conversation?.mock
         })
       }}
     >
@@ -54,15 +54,15 @@ function Conversation({ conversation, isOnline }) {
             sm: "sm",
             md: "md",
           }}
-          src={user.profilePic}
-          name={user.username}
+          src={user?.profilePic || ""}
+          name={user?.username || ""}
         >
           {isOnline && <AvatarBadge boxSize={"1em"} bg={"green.400"} />}
         </Avatar>
       </WrapItem>
       <Stack direction={"column"} fontSize={"sm"}>
         <Text fontWeight={700} display={"flex"} alignItems={"center"}>
-          {user.username} <Image src="/verified.png" w={4} h={4} ml={1} />
+          {user?.username || "Deleted"} <Image src="/verified.png" w={4} h={4} ml={1} />
         </Text>
         {/* we had a text here, but due to validateDomError p cannot have div or p as descendant */}
         <Box fontSize={"xs"} display={"flex"} alignItems={"ceter"} gap={1}>
