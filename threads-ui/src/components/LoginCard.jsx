@@ -1,4 +1,4 @@
-"use client";
+
 
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
