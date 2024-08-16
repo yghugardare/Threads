@@ -40,6 +40,10 @@ function Header() {
         showToast("Error", searchedUser.error, "error");
         return;
       }
+      if(searchedUser.isFrozen){
+        showToast("Error", "User has frozen his account!", "error");
+        return;
+      }
       navigate(`/${searchedUser.username}`);
     } catch (error) {
       showToast("Error", error.message, "error");

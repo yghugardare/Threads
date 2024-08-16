@@ -56,6 +56,10 @@ const loginUser = async (req, res, next) => {
     if (!user || !isPasswordCorrect) {
       return res.status(400).json({ error: "Invalid username or password" });
     }
+    if(user.isFrozen){
+      user.isFrozen = false;
+      await user.save();
+    }
     generateTokenAndSendCookies(user._id, res);
     res.status(200).json({
       _id: user._id,
@@ -144,13 +148,15 @@ const updateUser = async (req, res, next) => {
     }
     if (profilePic) {
       // if already there then delete the existing one
-			if (user.profilePic) {
-				await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
-			}
+      if (user.profilePic) {
+        await cloudinary.uploader.destroy(
+          user.profilePic.split("/").pop().split(".")[0]
+        );
+      }
 
-			const uploadedResponse = await cloudinary.uploader.upload(profilePic);
-			profilePic = uploadedResponse.secure_url;
-		}
+      const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+      profilePic = uploadedResponse.secure_url;
+    }
 
     // update other field
     user.name = name || user.name;
@@ -161,16 +167,16 @@ const updateUser = async (req, res, next) => {
     // save
     await user.save();
     // Find all posts that this user replied and update username and userProfilePic fields
-		await Post.updateMany(
-			{ "replies.userId": userId },
-			{
-				$set: {
-					"replies.$[reply].username": user.username,
-					"replies.$[reply].userProfilePic": user.profilePic,
-				},
-			},
-			{ arrayFilters: [{ "reply.userId": userId }] }
-		);
+    await Post.updateMany(
+      { "replies.userId": userId },
+      {
+        $set: {
+          "replies.$[reply].username": user.username,
+          "replies.$[reply].userProfilePic": user.profilePic,
+        },
+      },
+      { arrayFilters: [{ "reply.userId": userId }] }
+    );
 
     // we dont want to send password as a response
     user.password = null;
@@ -205,31 +211,58 @@ const getUserProfile = async (req, res, next) => {
     console.log("Error in geting User's Profile: ", err.message);
   }
 };
-const getSuggestedUsers = async (req,res)=>{
+const getSuggestedUsers = async (req, res) => {
   try {
     // exclude the current user from suggested users array and exclude users that current user is already following
-		const userId = req.user._id;
+    const userId = req.user._id;
 
-		const usersFollowedByYou = await User.findById(userId).select("following");
+    const usersFollowedByYou = await User.findById(userId).select("following");
 
-		const users = await User.aggregate([
-			{
-				$match: {
-					_id: { $ne: userId },
-				},
-			},
-			{
-				$sample: { size: 10 },
-			},
-		]);
-		const filteredUsers = users.filter((user) => !usersFollowedByYou.following.includes(user._id));
-		const suggestedUsers = filteredUsers.slice(0, 4);
+    const users = await User.aggregate([
+      {
+        $match: {
+          _id: { $ne: userId },
+        },
+      },
+      {
+        $sample: { size: 10 },
+      },
+    ]);
+    const filteredUsers = users.filter(
+      (user) => !usersFollowedByYou.following.includes(user._id)
+    );
+    const suggestedUsers = filteredUsers.slice(0, 4);
 
-		suggestedUsers.forEach((user) => (user.password = null));
+    suggestedUsers.forEach((user) => (user.password = null));
 
-		res.status(200).json(suggestedUsers);
+    res.status(200).json(suggestedUsers);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
-export { signUpUser, loginUser, logoutUser, followUnfollowUser, updateUser,getUserProfile,getSuggestedUsers};
+};
+const freezeAccount = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    user.isFrozen = true;
+    await user.save();
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export {
+  signUpUser,
+  loginUser,
+  logoutUser,
+  followUnfollowUser,
+  updateUser,
+  getUserProfile,
+  getSuggestedUsers,
+  freezeAccount,
+};

@@ -1,4 +1,3 @@
- 
 import UserHeader from "../components/UserHeader";
 
 import { useEffect, useState } from "react";
@@ -17,12 +16,12 @@ function UserPage() {
   // const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useRecoilState(postsAtom);
 
-  const [fetchingPosts, setFetchingPosts] = useState(true);
-  const {user,loading} = useGetUserProfile();
+  const [fetchingPosts, setFetchingPosts] = useState(false);
+  const { user, loading } = useGetUserProfile();
   useEffect(() => {
-    
-
     const getPosts = async () => {
+      setFetchingPosts(true);
+      if (!user) return;
       try {
         const res = await fetch(`/api/posts/user/${username}`);
         const data = await res.json();
@@ -42,7 +41,8 @@ function UserPage() {
     // getUser();
     // console.log(posts)
     getPosts();
-  }, [showToast,username,setPosts]);
+  }, [showToast, username, setPosts, user]);
+
   if (!user && loading) {
     // showToast("Error", "User not Found", "error");
     return (
@@ -65,7 +65,11 @@ function UserPage() {
         </Flex>
       )}
       {posts.map((post) => (
-        <Post post={post} postedBy={post.postedBy} key={post._id+post.createdAt} />
+        <Post
+          post={post}
+          postedBy={post.postedBy}
+          key={post._id + post.createdAt}
+        />
       ))}
     </div>
   );
