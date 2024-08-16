@@ -14,7 +14,7 @@ Welcome to the **Threads Application Clone**, a feature-rich social media platfo
 - **Real-Time Chat**: Engage in real-time conversations with text and image support. Message status indicators show whether messages have been seen (blue tick) or not (white tick).
 - **Notification Alerts**: Receive sound notifications for new messages to stay updated instantly.
 
-## 🛠  Tech Stack
+## 🛠 Tech Stack
 
 - 💫**Frontend**: React, Recoil for state management
 - 🗄️**Backend**: Node.js, Express.js, Mongoose, MongoDB
@@ -32,29 +32,34 @@ Follow these steps to set up the project on your local machine.
 
 ### Installation
 
-1. **Clone the repository**
+1.  **Clone the repository**
 
     ```bash
     git clone https://github.com/your-username/threads-app-clone.git
     cd threads-app-clone
     ```
 
-2. **Install dependencies**
+2.  **Install dependencies**
 
     ```bash
     npm install
     ```
 
-3. **Set up environment variables**
+3.  **Set up environment variables**
 
-    Create a `.env` file in the root directory and add your environment variables.
+        Create a `.env` file in the root directory and add your environment variables.
 
-    ```plaintext
-    MONGODB_URI=your-mongodb-uri
-    SOCKET_IO_PORT=your-socket-io-port
-    ```
+        ```plaintext
+        PORT=5000
+        JWT_SECRET=
+        CLOUDINARY_CLOUD_NAME=
+        CLOUDINARY_API_KEY=
+        CLOUDINARY_API_SECRET=
+        MONGO_DB_URI=
 
-4. **Run the development server**
+        ```
+
+4.  **Run the development server**
 
     ```bash
     npm run dev
@@ -68,8 +73,6 @@ Follow these steps to set up the project on your local machine.
 2. **Explore**: Search for users, follow them, and engage with their content.
 3. **Create and Interact with Posts**: Upload images, comment, like, and share posts.
 4. **Real-Time Chat**: Connect with others instantly, with seen/unseen indicators and notification sounds.
-
-
 
 ---
 

@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import dotenv from "dotenv";
 import { connectDb } from "./db/connectDb.js";
 import cookieParser from "cookie-parser";
@@ -10,6 +11,8 @@ import { app, server } from "./socket/socket.js";
 dotenv.config();
 connectDb();
 // const app = express();
+const PORT = process.env.PORT || 5000;
+const __dirname = path.resolve();
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -29,7 +32,14 @@ app.use("/api/users/", userRoute);
 app.use("/api/posts/", postRoute);
 app.use("/api/messages", messageRouter);
 
-const PORT = process.env.PORT || 5000;
+if (process.env.NODE_ENV === "production") {
+	app.use(express.static(path.join(__dirname, "/threads-ui/dist")));
+
+	// react app
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__dirname, "threads-ui", "dist", "index.html"));
+	});
+}
 
 server.listen(PORT, () => {
   console.log(`Server is Running at http://localhost:${PORT}`);

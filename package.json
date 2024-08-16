@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js",
-    "start": "node server.js"
+    "dev": "cross-env NODE_ENV=development nodemon threads-backend/server.js",
+    "start": "cross-env NODE_ENV=production node threads-backend/server.js",
+    "build": "npm install && npm install --prefix threads-ui && npm run build --prefix threads-ui"
   },
   "type": "module",
   "keywords": [],
@@ -23,6 +23,7 @@
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "nodemon": "^3.1.4"
   }
 }
