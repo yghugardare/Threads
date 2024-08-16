@@ -1,6 +1,7 @@
 import express from "express";
 import {
   followUnfollowUser,
+  getSuggestedUsers,
   getUserProfile,
   loginUser,
   logoutUser,
@@ -12,7 +13,7 @@ import { protectRoute } from "../middlewares/protectedRoute.js";
 const userRoute = express.Router();
 
 userRoute.get("/profile/:query", getUserProfile);
-
+userRoute.get("/suggested",protectRoute,getSuggestedUsers)
 userRoute.post("/signup", signUpUser);
 userRoute.post("/login", loginUser);
 userRoute.post("/logout", logoutUser);
