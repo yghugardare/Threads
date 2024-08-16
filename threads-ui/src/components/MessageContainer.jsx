@@ -123,6 +123,31 @@ function MessageContainer() {
     };
     getMessages();
   }, [showToast, selectedConversation.userId, selectedConversation.mock]);
+  useEffect(()=>{
+    const lastMessageIsFromOtherUser = messages.length && messages[messages.length-1].sender !== currentUser._id;
+    if(lastMessageIsFromOtherUser){
+      socket.emit("markMessageAsSeen",{
+        conversationId : selectedConversation._id,
+        userId : selectedConversation.userId
+      })
+    }
+    socket.on("messagesSeen", ({ conversationId }) => {
+			if (selectedConversation._id === conversationId) {
+				setMessages((prev) => {
+					const updatedMessages = prev.map((message) => {
+						if (!message.seen) {
+							return {
+								...message,
+								seen: true,
+							};
+						}
+						return message;
+					});
+					return updatedMessages;
+				});
+			}
+		}); 
+  },[currentUser._id,messages,selectedConversation._id,selectedConversation.userId,socket])
   // whenever there is new message scroll down to end message smoothly
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });

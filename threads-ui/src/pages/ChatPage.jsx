@@ -81,9 +81,29 @@ function ChatPage() {
   );
   const [conversations, setConversations] = useRecoilState(conversationsAtom);
   const currentUser = useRecoilValue(userAtom);
-  const {socket,onlineUsers} = useSocket()
+  const { socket, onlineUsers } = useSocket();
 
   const showToast = useShowToast();
+  useEffect(() => {
+    // update seen status for conversation
+    socket?.on("messagesSeen", ({ conversationId }) => {
+      setConversations((prev) => {
+        const updatedConversations = prev.map((conversation) => {
+          if (conversation._id === conversationId) {
+            return {
+              ...conversation,
+              lastMessage: {
+                ...conversation.lastMessage,
+                seen: true,
+              },
+            };
+          }
+          return conversation;
+        });
+        return updatedConversations;
+      });
+    });
+  }, [socket, setConversations]);
   useEffect(() => {
     const getConversations = async () => {
       try {
@@ -107,7 +127,6 @@ function ChatPage() {
     e.preventDefault();
     setSearchingUser(true);
     try {
-      
       const res = await fetch(`/api/users/profile/${searchText}`);
       const searchedUser = await res.json();
       if (searchedUser.error) {
@@ -223,7 +242,9 @@ function ChatPage() {
               <Conversation
                 key={conversation._id}
                 // check if user we are chatting with is in the onlineUsers array
-                isOnline={onlineUsers.includes(conversation.participants[0]._id)}
+                isOnline={onlineUsers.includes(
+                  conversation.participants[0]._id
+                )}
                 conversation={conversation}
               />
             ))}
